@@ -23,8 +23,8 @@ jobs:
     # Build
     - name: Build Docker image
       run: |
-        docker build -t ${CCS}/${NAMESPACE}/frps:${GITHUB_SHA} -f ./dockerfiles/Dockerfile-for-frps .
-        docker build -t ${CCS}/${NAMESPACE}/frpc:${GITHUB_SHA} -f ./dockerfiles/Dockerfile-for-frpc .
+        docker build -t ${CCS}/${NAMESPACE}/frps -f ./dockerfiles/Dockerfile-for-frps .
+        docker build -t ${CCS}/${NAMESPACE}/frpc -f ./dockerfiles/Dockerfile-for-frpc .
 
     - name: Login TKE Registry
       run: |
@@ -33,5 +33,5 @@ jobs:
     # Push the Docker image to TKE Registry
     - name: Publish
       run: |
-        docker push ${CCS}/${NAMESPACE}/frps:${GITHUB_SHA}
-        docker push ${CCS}/${NAMESPACE}/frpc:${GITHUB_SHA}
+        docker push ${CCS}/${NAMESPACE}/frps
+        docker push ${CCS}/${NAMESPACE}/frpc
