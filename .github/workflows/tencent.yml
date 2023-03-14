@@ -4,14 +4,15 @@ on:
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  TKE_IMAGE_URL: ccr.ccs.tencentyun.com/haicheng/frps
+  CCS: ccr.ccs.tencentyun.com
+  NAMESPACE: haicheng
 
 permissions:
   contents: read
 
 jobs:
   setup-build-publish-deploy:
-    name: Setup, Build, Publish, and Deploy
+    name: Setup, Build, Publish
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -22,13 +23,15 @@ jobs:
     # Build
     - name: Build Docker image
       run: |
-        docker build -t ${TKE_IMAGE_URL}:${GITHUB_SHA} -f ./dockerfiles/Dockerfile-for-frps .
+        docker build -t ${CCS}/${NAMESPACE}/frps:${GITHUB_SHA} -f ./dockerfiles/Dockerfile-for-frps .
+        docker build -t ${CCS}/${NAMESPACE}/frpc:${GITHUB_SHA} -f ./dockerfiles/Dockerfile-for-frpc .
 
     - name: Login TKE Registry
       run: |
-        docker login -u ${{ secrets.TENCENT_CLOUD_ACCOUNT_ID }} -p '${{ secrets.TKE_REGISTRY_PASSWORD }}' ${TKE_IMAGE_URL}
+        docker login -u ${{ secrets.TENCENT_CLOUD_ACCOUNT_ID }} -p '${{ secrets.TKE_REGISTRY_PASSWORD }}' ${CCS}
 
     # Push the Docker image to TKE Registry
     - name: Publish
       run: |
-        docker push ${TKE_IMAGE_URL}:${GITHUB_SHA}
+        docker push ${CCS}/${NAMESPACE}/frps:${GITHUB_SHA}
+        docker push ${CCS}/${NAMESPACE}/frpc:${GITHUB_SHA}
